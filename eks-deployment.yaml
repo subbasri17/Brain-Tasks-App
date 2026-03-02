@@ -1,0 +1,20 @@
+kind: Deployment
+metadata:
+  name: brain-tasks-app
+  labels:
+    app: brain-tasks-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: brain-tasks-app
+  template:
+    metadata:
+      labels:
+        app: brain-tasks-app
+    spec:
+      containers:
+        - name: webserver
+          image: aarushisuba/webserver:latest
+          ports:
+            - containerPort: 3000
