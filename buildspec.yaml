@@ -1,0 +1,46 @@
+version: 0.2
+
+env:
+  variables:
+    IMAGE_NAME: aarushisuba/webserver1
+    AWS_DEFAULT_REGION: ap-south-1
+    EKS_CLUSTER: brain-cluster
+
+phases:
+
+  install:
+    commands:
+      - echo Installing kubectl
+      - curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.27.1/2023-09-14/bin/linux/amd64/kubectl
+      - chmod +x kubectl
+      - mv kubectl /usr/local/bin/
+
+  pre_build:
+    commands:
+      - echo Login to DockerHub
+      - echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+
+      - echo Updating kubeconfig
+      - aws eks --region $AWS_DEFAULT_REGION update-kubeconfig --name $EKS_CLUSTER
+
+      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+
+  build:
+    commands:
+      - echo Build started on `date`
+      - docker build -t $IMAGE_NAME:$IMAGE_TAG .
+      - docker tag $IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:latest
+
+  post_build:
+    commands:
+      - echo Pushing Docker images
+      - docker push $IMAGE_NAME:$IMAGE_TAG
+      - docker push $IMAGE_NAME:latest
+
+      - echo Deploying to EKS
+      - kubectl apply -f eks-deployment.yaml
+      - kubectl apply -f service.yaml
+
+artifacts:
+  files:
+    - '**/*'
