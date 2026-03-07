@@ -3,7 +3,7 @@ version: 0.2
 env:
   variables:
     IMAGE_NAME: aarushisuba/webserver1
-    AWS_DEFAULT_REGION: ap-southeast-1
+    AWS_DEFAULT_REGION: ap-south-1
     EKS_CLUSTER: brain-cluster
 
 phases:
