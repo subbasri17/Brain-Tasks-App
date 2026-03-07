@@ -40,23 +40,6 @@ pipeline {
             }
         }
 
-        stage("Deploy to EKS") {
-            steps {
-                script {
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding',
-                                  credentialsId: 'aws-credentials']]) {
-
-                    sh """
-                    aws eks --region $AWS_REGION update-kubeconfig --name $EKS_CLUSTER
-
-
-
-                    kubectl --kubeconfig=/var/lib/jenkins/.kube/config apply -f eks-deployment.yaml
-                    kubectl --kubeconfig=/var/lib/jenkins/.kube/config apply -f service.yaml
-                    """
-                   }
-                }
-            }
-        }
+        
     }
 }
