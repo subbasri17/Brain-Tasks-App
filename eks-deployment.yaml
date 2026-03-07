@@ -15,7 +15,7 @@ spec:
         app: brain-tasks-app
     spec:
       containers:
-        - name: webserver1
-          image: aarushisuba/webserver1:latest
+        - name: webserver
+          image: aarushisuba/webserver:latest
           ports:
             - containerPort: 80
